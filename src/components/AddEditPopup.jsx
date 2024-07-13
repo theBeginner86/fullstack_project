@@ -1,12 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Input, Button } from 'antd';
+import { fetchStudentColumns } from '../api';
 
 const AddEditPopup = ({ isOpen, data, onSave, onClose }) => {
-  const [formData, setFormData] = useState(data || {});
+  const [formData, setFormData] = useState({});
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
-    setFormData(data || {});
+    const fetchColumns = async () => {
+      try {
+        const cols = await fetchStudentColumns();
+        setColumns(cols);
+      } catch (error) {
+        console.error('Failed to fetch columns:', error);
+      }
+    };
+
+    fetchColumns();
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setFormData(data);
+    } else {
+      setFormData({});
+    }
   }, [data]);
+
+  useEffect(() => {
+    if (!data) {
+      setFormData({});
+    }
+  }, [isOpen, data]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,20 +52,17 @@ const AddEditPopup = ({ isOpen, data, onSave, onClose }) => {
         <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
       ]}
     >
-      <Input
-        name="column1"
-        value={formData.column1 || ''}
-        onChange={handleChange}
-        placeholder="Column #1"
-        className="mb-2"
-      />
-      <Input
-        name="column2"
-        value={formData.column2 || ''}
-        onChange={handleChange}
-        placeholder="Column #2"
-        className="mb-2"
-      />
+      {columns.slice(1).map(column => (
+        <div key={column} className="mb-2">
+          <label>{column}:</label>
+          <Input
+            name={column}
+            value={formData[column] || ''}
+            onChange={handleChange}
+            placeholder={column}
+          />
+        </div>
+      ))}
     </Modal>
   );
 };

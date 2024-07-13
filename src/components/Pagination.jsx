@@ -14,9 +14,9 @@ const Pagination = ({ totalRecords, currentPage, pageSize, onPageChange }) => {
         onChange={(page, pageSize) => onPageChange(page, pageSize)}
       />
       <Select value={pageSize} onChange={(value) => onPageChange(1, value)}>
+        <Select.Option value={5}>5</Select.Option>
         <Select.Option value={10}>10</Select.Option>
         <Select.Option value={20}>20</Select.Option>
-        <Select.Option value={50}>50</Select.Option>
       </Select>
     </div>
   );
