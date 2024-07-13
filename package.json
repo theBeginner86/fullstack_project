@@ -4,7 +4,10 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
+<<<<<<< HEAD
     "@prisma/client": "^5.16.2",
+=======
+>>>>>>> origin/main
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -41,7 +44,10 @@
     ]
   },
   "devDependencies": {
+<<<<<<< HEAD
     "prisma": "^5.16.2",
+=======
+>>>>>>> origin/main
     "tailwindcss": "^3.4.4"
   }
 }
