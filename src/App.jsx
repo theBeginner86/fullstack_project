@@ -5,17 +5,22 @@ import DataList from './components/DataList';
 import Pagination from './components/Pagination';
 import AddEditPopup from './components/AddEditPopup';
 import {
-  fetchStudentColumns,
-  searchStudents,
-  sortStudents,
-  selectAllStudents,
+  searchRecords,
+  sortRecords,
+  selectAllRecords,
   insertStudent,
   deleteStudents,
-  fetchStudentById,
-  updateStudent
+  updateStudent,
+  insertMentor,
+  updateMentor,
+  deleteMentors,
+  insertProject,
+  updateProject,
+  deleteProjects
 } from './api';
 
 const App = () => {
+  const [entity, setEntity] = useState('projects');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('Name');
   const [sortType, setSortType] = useState('ascending');
@@ -27,12 +32,13 @@ const App = () => {
   const [editData, setEditData] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
 
+///////////////////////////////// COMMON METHODS ////////////////////////////////////
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const allStudents = await selectAllStudents();
-        setData(allStudents);
-        setTotalRecords(allStudents.length);
+        const allRecords = await selectAllRecords(entity);
+        setData(allRecords);
+        setTotalRecords(allRecords.length);
       } catch (error) {
         console.error('Failed to fetch students:', error);
       }
@@ -40,31 +46,25 @@ const App = () => {
 
     fetchData();
   }, []);
-
-  const handleSearchChange = (value) => {
-    setSearchTerm(value); 
-  };
   
-  
-
-  const handleSearch = async (column, searchTerm) => {
+  const handleSearch = async (entity, column, searchTerm) => {
     try {
-      const searchedStudents = await searchStudents(column, searchTerm);
-      setData(searchedStudents);
-      setTotalRecords(searchedStudents.length);
+      const searchedRecords = await searchRecords(entity, column, searchTerm);
+      setData(searchedRecords);
+      setTotalRecords(searchedRecords.length);
     } catch (error) {
-      console.error('Failed to search students:', error);
+      console.error('Failed to search ${entity}:', error);
     }
   };
 
   const handleReset = async () => {
     setSearchTerm('');
     try {
-      const allStudents = await selectAllStudents();
-      setData(allStudents);
-      setTotalRecords(allStudents.length);
+      const allRecords = await selectAllRecords(entity);
+      setData(allRecords);
+      setTotalRecords(allRecords.length);
     } catch (error) {
-      console.error('Failed to fetch students:', error);
+      console.error('Failed to fetch records:', error);
     }
   };
 
@@ -78,37 +78,17 @@ const App = () => {
 
   const handleSort = async () => {
     try {
-      const sortedStudents = await sortStudents(sortBy, sortType);
-      setData(sortedStudents);
+      const sortedRecords = await sortRecords(entity, sortBy, sortType);
+      setData(sortedRecords);
     } catch (error) {
-      console.error('Failed to sort students:', error);
+      console.error('Failed to sort records of ${entity}:', error);
     }
   };
 
   const handleAdd = () => {
-    console.log('Opening add popup');
     setEditData(null); 
     setPopupOpen(true);
     setEditData(null); 
-  };
-
-  const handleDelete = async () => {
-    if (selectedIds.length === 0) {
-      alert('No records selected');
-      return;
-    }
-    const confirmed = window.confirm(`Are you sure you want to delete IDs: ${selectedIds.join(', ')}?`);
-    if (confirmed) {
-      try {
-        await deleteStudents(selectedIds);
-        const allStudents = await selectAllStudents();
-        setData(allStudents);
-        setTotalRecords(allStudents.length);
-        setSelectedIds([]); 
-      } catch (error) {
-        console.error('Failed to delete students:', error);
-      }
-    }
   };
 
   const handleEdit = (item) => {
@@ -118,41 +98,144 @@ const App = () => {
 
   const handlePageChange = (page) => setCurrentPage(page);
 
-  const handleSave = async (formData) => {
+  const handleClose = () => setPopupOpen(false);
+
+///////////////////////////////////////// STUDENT METHODS /////////////////////////////////////////////
+
+  const handleDeleteStudent = async () => {
+    if (selectedIds.length === 0) {
+      alert('No records selected');
+      return;
+    }
+    const confirmed = window.confirm(`Are you sure you want to delete IDs: ${selectedIds.join(', ')}?`);
+    if (confirmed) {
+      try {
+        await deleteStudents(selectedIds);
+        const allRecords = await selectAllRecords(entity);
+        setData(allRecords);
+        setTotalRecords(allRecords.length);
+        setSelectedIds([]); 
+      } catch (error) {
+        console.error('Failed to delete records:', error);
+      }
+    }
+  };
+
+  const handleSaveStudent = async (formData) => {
     try {
       if (editData) {
         await updateStudent(editData.ID, formData);
       } else {
         await insertStudent(formData);
       }
-      const allStudents = await selectAllStudents();
-      setData(allStudents);
-      setTotalRecords(allStudents.length);
+      const allRecords = await selectAllRecords(entity);
+      setData(allRecords);
+      setTotalRecords(allRecords.length);
       setPopupOpen(false);
       setEditData(null);
     } catch (error) {
-      console.error('Failed to save student:', error);
+      console.error('Failed to save record:', error);
     }
   };
 
-  const handleClose = () => setPopupOpen(false);
+///////////////////////////////////////// MENTOR METHODS /////////////////////////////////////////////
+
+  const handleSaveMentor = async (formData) => {
+    try {
+      if (editData) {
+        await updateMentor(editData.MentorID, formData);
+      } else {
+        await insertMentor(formData);
+      }
+      const allRecords = await selectAllRecords(entity);
+      setData(allRecords);
+      setTotalRecords(allRecords.length);
+      setPopupOpen(false);
+      setEditData(null);
+    } catch (error) {
+      console.error('Failed to save record:', error);
+    }
+  };
+
+  const handleDeleteMentor = async () => {
+    if (selectedIds.length === 0) {
+      alert('No records selected');
+      return;
+    }
+    const confirmed = window.confirm(`Are you sure you want to delete IDs: ${selectedIds.join(', ')}?`);
+    if (confirmed) {
+      try {
+        await deleteMentors(selectedIds);
+        const allRecords = await selectAllRecords(entity);
+        setData(allRecords);
+        setTotalRecords(allRecords.length);
+        setSelectedIds([]); 
+      } catch (error) {
+        console.error('Failed to delete records:', error);
+      }
+    }
+  };
+
+///////////////////////////////////////// PROJECT METHODS /////////////////////////////////////////////
+
+const handleSaveProject = async (formData) => {
+  try {
+    if (editData) {
+      await updateProject(editData.ProjectID, formData);
+    } else {
+      await insertProject(formData);
+    }
+    const allRecords = await selectAllRecords(entity);
+    setData(allRecords);
+    setTotalRecords(allRecords.length);
+    setPopupOpen(false);
+    setEditData(null);
+  } catch (error) {
+    console.error('Failed to save record:', error);
+  }
+};
+
+const handleDeleteProject = async () => {
+  if (selectedIds.length === 0) {
+    alert('No records selected');
+    return;
+  }
+  const confirmed = window.confirm(`Are you sure you want to delete IDs: ${selectedIds.join(', ')}?`);
+  if (confirmed) {
+    try {
+      await deleteProjects(selectedIds);
+      const allRecords = await selectAllRecords(entity);
+      setData(allRecords);
+      setTotalRecords(allRecords.length);
+      setSelectedIds([]); 
+    } catch (error) {
+      console.error('Failed to delete records:', error);
+    }
+  }
+};
 
   return (
     <div className="container mx-auto p-4">
       <SearchCriteria 
+        entity={entity}
         onSearch={handleSearch}
         onReset={handleReset}
       />
       <SortFilter
+        entity={entity}
         sortBy={sortBy}
         sortType={sortType}
         onSortChange={handleSortChange}
         onSortTypeChange={handleSortTypeChange}
         onSort={handleSort}
         onAdd={handleAdd}
-        onDelete={handleDelete}
+        onDelete={handleDeleteProject}
       />
-      <DataList data={data} onEdit={handleEdit} onSelect={setSelectedIds} />
+      <DataList 
+        entity={entity}
+        data={data} 
+        onEdit={handleEdit} 
+        onSelect={setSelectedIds} />
       <Pagination
         totalRecords={totalRecords}
         currentPage={currentPage}
@@ -160,9 +243,10 @@ const App = () => {
         onPageChange={handlePageChange}
       />
       <AddEditPopup
+        entity={entity}
         isOpen={popupOpen}
         data={editData}
-        onSave={handleSave}
+        onSave={handleSaveProject}
         onClose={handleClose}
       />
     </div>

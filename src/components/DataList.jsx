@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Checkbox } from 'antd';
-import { fetchStudentColumns } from '../api';
+import { Table, Button } from 'antd';
+import { fetchEntityColumns } from '../api';
 
-const DataList = ({ data, onEdit, onSelect }) => {
+const DataList = ({ data, onEdit, onSelect, entity }) => {
   const [columns, setColumns] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const cols = await fetchStudentColumns();
+        const cols = await fetchEntityColumns(entity);
         setColumns(cols);
       } catch (error) {
         console.error('Failed to fetch columns:', error);
@@ -17,11 +17,11 @@ const DataList = ({ data, onEdit, onSelect }) => {
     };
 
     fetchColumns();
-  }, []);
+  }, [entity]);
 
-  const onSelectChange = (selectedRowKeys) => {
-    setSelectedRowKeys(selectedRowKeys);
-    onSelect(selectedRowKeys);
+  const onSelectChange = (newSelectedRowKeys) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+    onSelect(newSelectedRowKeys);
   };
 
   const rowSelection = {
@@ -29,8 +29,18 @@ const DataList = ({ data, onEdit, onSelect }) => {
     onChange: onSelectChange,
   };
 
+  // Determine the row key based on entity
+  let rowKey;
+  if (entity === 'mentors') {
+    rowKey = 'MentorID';
+  } else if (entity === 'students') {
+    rowKey = 'ID';
+  } else if (entity === 'projects') {
+    rowKey = 'ProjectID'; 
+  }
+
   const tableColumns = [
-    ...columns.map(column => ({
+    ...columns.map((column) => ({
       title: column,
       dataIndex: column,
       key: column,
@@ -39,9 +49,7 @@ const DataList = ({ data, onEdit, onSelect }) => {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        <Button onClick={() => onEdit(record)}>
-          Edit
-        </Button>
+        <Button onClick={() => onEdit(record)}>Edit</Button>
       ),
     },
   ];
@@ -50,7 +58,7 @@ const DataList = ({ data, onEdit, onSelect }) => {
     <Table
       dataSource={data}
       columns={tableColumns}
-      rowKey="ID"
+      rowKey={rowKey}
       rowSelection={rowSelection}
     />
   );

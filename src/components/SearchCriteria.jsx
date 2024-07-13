@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Select } from 'antd';
-import { fetchStudentColumns } from '../api';
+import { fetchEntityColumns } from '../api'; // Update to your actual API function
 
 const { Option } = Select;
 
-const SearchCriteria = ({ onSearch, onReset }) => {
+const SearchCriteria = ({ entity, onSearch, onReset }) => {
   const [columns, setColumns] = useState([]);
   const [selectedColumn, setSelectedColumn] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,7 +12,7 @@ const SearchCriteria = ({ onSearch, onReset }) => {
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const cols = await fetchStudentColumns();
+        const cols = await fetchEntityColumns(entity); // Fetch columns based on entity
         setColumns(cols);
       } catch (error) {
         console.error('Failed to fetch columns:', error);
@@ -20,7 +20,7 @@ const SearchCriteria = ({ onSearch, onReset }) => {
     };
 
     fetchColumns();
-  }, []);
+  }, [entity]);
 
   const handleSearch = () => {
     if (!selectedColumn || !searchTerm) {
@@ -28,7 +28,7 @@ const SearchCriteria = ({ onSearch, onReset }) => {
       return;
     }
 
-    onSearch(selectedColumn, searchTerm);
+    onSearch(entity, selectedColumn, searchTerm);
   };
 
   return (

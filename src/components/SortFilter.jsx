@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Button } from 'antd';
-import { fetchStudentColumns } from '../api';
+import { fetchEntityColumns } from '../api';
 
 const { Option } = Select;
 
-const SortFilter = ({ sortBy, sortType, onSortChange, onSortTypeChange, onSort, onAdd, onDelete }) => {
+const SortFilter = ({ sortBy, sortType, onSortChange, onSortTypeChange, onSort, onAdd, onDelete, entity }) => {
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const cols = await fetchStudentColumns();
+        const cols = await fetchEntityColumns(entity);
         setColumns(cols);
       } catch (error) {
         console.error('Failed to fetch columns:', error);

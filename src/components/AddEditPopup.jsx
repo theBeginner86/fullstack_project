@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Input, Button } from 'antd';
-import { fetchStudentColumns } from '../api';
+import { fetchEntityColumns } from '../api';
 
-const AddEditPopup = ({ isOpen, data, onSave, onClose }) => {
+const AddEditPopup = ({ isOpen, data, onSave, onClose, entity }) => {
   const [formData, setFormData] = useState({});
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const cols = await fetchStudentColumns();
+        const cols = await fetchEntityColumns(entity);
         setColumns(cols);
       } catch (error) {
         console.error('Failed to fetch columns:', error);
@@ -52,7 +52,7 @@ const AddEditPopup = ({ isOpen, data, onSave, onClose }) => {
         <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
       ]}
     >
-      {columns.slice(1).map(column => (
+      {columns.map(column => (
         <div key={column} className="mb-2">
           <label>{column}:</label>
           <Input

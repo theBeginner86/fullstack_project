@@ -2,7 +2,7 @@ import React from 'react';
 import { Pagination as AntPagination, Select } from 'antd';
 
 const Pagination = ({ totalRecords, currentPage, pageSize, onPageChange }) => {
-  const totalPages = Math.ceil(totalRecords / pageSize);
+  // const totalPages = Math.ceil(totalRecords / pageSize);
 
   return (
     <div className="flex items-center justify-between mt-4">
