@@ -71,6 +71,7 @@ class MentorBase(BaseModel):
     Availability: Optional[str]
     LinkedIn: Optional[str]
     Organization: Optional[str]
+    OrganizationID: Optional[int]
 
 class MentorCreate(MentorBase):
     pass
@@ -105,7 +106,25 @@ class Project(ProjectBase):
     class Config:
         orm_mode = True
 
-EntityResponse = Union[List[Student], List[Mentor], List[Project]]
+class OrganizationBase(BaseModel):
+    OrganizationID: Optional[int]
+    Name: str
+    Description: Optional[str]
+    Website: Optional[str]
+
+class OrganizationCreate(OrganizationBase):
+    pass
+
+class OrganizationUpdate(OrganizationBase):
+    pass
+
+class Organization(OrganizationBase):
+    OrganizationID: int
+
+    class Config:
+        orm_mode = True
+
+EntityResponse = Union[List[Student], List[Mentor], List[Project], List[Organization]]
 
 
 # Define columns for different entities
@@ -132,7 +151,8 @@ columns_mapping = {
         "Specialization",
         "Availability",
         "LinkedIn",
-        "Organization"
+        "Organization",
+        "OrganizationID"
     ],
     "projects": [
         "ProjectID",
@@ -142,6 +162,12 @@ columns_mapping = {
         "Skills",
         "HW_Needed",
         "Milestones"
+    ],
+    "organizations": [
+        "OrganizationID",
+        "Name",
+        "Description",
+        "Website"
     ]
 }
 
@@ -156,13 +182,15 @@ async def fetch_entity_columns(entity: str):
 entity_models = {
         "students": prisma.student,
         "mentors": prisma.mentor,
-        "projects": prisma.project
+        "projects": prisma.project,
+        "organizations": prisma.organization
     }
 
 res_models = {
     "students": Student,
     "mentors": Mentor,
     "projects": Project,
+    "organizations": Organization,
 }
 
 # Fetch records based on a particular column's value
@@ -179,8 +207,9 @@ async def search_records(entity: str, column: str, value: str):
     # Check if the column requires integer type
     integer_columns = {
         "students": ["ID", "Yr_Start", "Yr_End", "MentorID"],
-        "mentors": ["MentorID"],  
-        "projects": ["ProjectID"]
+        "mentors": ["MentorID", "OrganizationID"],
+        "projects": ["ProjectID"],
+        "organizations": ["OrganizationID"]
     }
 
     if column in integer_columns.get(entity, []):
@@ -261,7 +290,7 @@ async def update_student(student_id: int, student: StudentUpdate):
 @app.post("/mentors", response_model=Mentor)
 async def insert_mentor(mentor: MentorCreate):
     try:
-        new_mentor = await prisma.mentor.create(data=mentor.dict())
+        new_mentor = await prisma.mentor.create(data=mentor.dict(exclude_unset=True))
         return new_mentor
     except Exception as e:
         if "Unique constraint failed" in str(e):
@@ -319,6 +348,38 @@ async def delete_students(project_id: int= Query(...)):
     if not deleted_project:
         raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
     return deleted_project
+
+###################### ORGANIZATION TABLE CRUD ###################
+# Insert a new organization record
+@app.post("/organizations", response_model=Organization)
+async def insert_organization(organization: OrganizationCreate):
+    try:
+        new_organization = await prisma.organization.create(data=organization.dict())
+        return new_organization
+    except Exception as e:
+        if "Unique constraint failed" in str(e):
+            raise HTTPException(status_code=400, detail="Organization ID already exists")
+        else:
+            raise HTTPException(status_code=500, detail="Failed to insert organization")
+
+# Update an organization record
+@app.put("/organizations/{organization_id}", response_model=Organization)
+async def update_organization(organization_id: int, organization: OrganizationUpdate):
+    updated_organization = await prisma.organization.update(
+        where={"OrganizationID": organization_id},
+        data=organization.dict(exclude_unset=True)
+    )
+    if not updated_organization:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return updated_organization
+
+# Delete an organization record based on index
+@app.delete("/organizations", response_model=Organization)
+async def delete_organization(organization_id: int = Query(...)):
+    deleted_organization = await prisma.organization.delete(where={"OrganizationID": organization_id})
+    if not deleted_organization:
+        raise HTTPException(status_code=404, detail=f"Organization with ID {organization_id} not found")
+    return deleted_organization
 
 if __name__ == "__main__":
     import uvicorn

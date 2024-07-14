@@ -173,3 +173,48 @@ export const deleteProject = async (projectId) => {
     }
     return response.json();
   };
+
+//////////////////////////////////// ORGANIZATION ENDPOINTS //////////////////////////////////
+// Insert a new organization record
+export const insertOrganization = async (organization) => {
+  const response = await fetch(`${BASE_URL}/organizations`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(organization),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to insert organization');
+  }
+  return response.json();
+};
+
+// Update an organization record
+export const updateOrganization = async (organizationId, organization) => {
+  const response = await fetch(`${BASE_URL}/organizations/${organizationId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(organization),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update organization');
+  }
+  return response.json();
+};
+
+// Delete organization record based on ID
+export const deleteOrganization = async (organizationId) => {
+  const response = await fetch(`${BASE_URL}/organizations?organization_id=${organizationId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete organization');
+  }
+  return response.json();
+};

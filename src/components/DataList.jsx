@@ -28,7 +28,9 @@ const DataList = ({ data, onEdit, onDelete, entity }) => {
   } else if (entity === 'students') {
     rowKey = 'ID';
   } else if (entity === 'projects') {
-    rowKey = 'ProjectID'; 
+    rowKey = 'ProjectID';
+  } else if (entity === 'organizations') {
+    rowKey = 'OrganizationID';
   }
 
   const tableColumns = [

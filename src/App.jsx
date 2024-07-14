@@ -15,7 +15,10 @@ import {
   deleteMentor,
   insertProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  insertOrganization,
+  updateOrganization,
+  deleteOrganization
 } from './api';
 
 const App = ({ entity }) => {
@@ -86,7 +89,6 @@ const App = ({ entity }) => {
   const handleAdd = () => {
     setEditData(null);
     setPopupOpen(true);
-    setEditData(null);
   };
 
   const handleEdit = (item) => {
@@ -234,6 +236,44 @@ const App = ({ entity }) => {
     }
   };
 
+  //////////////////////////////////////////////// ORGANIZATION METHODS ////////////////////////////////////////////////
+
+  const handleSaveOrganization = async (formData) => {
+    try {
+      if (editData) {
+        await updateOrganization(editData.OrganizationID, formData);
+      } else {
+        await insertOrganization(formData);
+      }
+      const allRecords = await selectAllRecords(entity);
+      setData(allRecords);
+      setTotalRecords(allRecords.length);
+      setPopupOpen(false);
+      setEditData(null);
+    } catch (error) {
+      console.error('Failed to save record:', error);
+      if (error.message === 'Failed to insert organization') {
+        alert('Failed to insert organization: Organization ID already exists');
+      } else {
+        alert('Failed to save record. Please try again later.');
+      }
+    }
+  };
+
+  const handleDeleteOrganization = async (organizationId) => {
+    const confirmed = window.confirm(`Are you sure you want to delete ID: ${organizationId}?`);
+    if (confirmed) {
+      try {
+        await deleteOrganization(organizationId);
+        const allRecords = await selectAllRecords(entity);
+        setData(allRecords);
+        setTotalRecords(allRecords.length);
+      } catch (error) {
+        console.error('Failed to delete record:', error);
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <SearchCriteria
@@ -253,14 +293,24 @@ const App = ({ entity }) => {
       <DataList
         entity={entity}
         data={data}
-        onEdit={entity === 'students' ? handleEdit : (entity === 'mentors' ? handleEdit : handleEdit)}
-        onDelete={entity === 'students' ? handleDeleteStudent : (entity === 'mentors' ? handleDeleteMentor : handleDeleteProject)}
+        onEdit={handleEdit}
+        onDelete={
+          entity === 'students' ? handleDeleteStudent :
+          entity === 'mentors' ? handleDeleteMentor :
+          entity === 'projects' ? handleDeleteProject :
+          handleDeleteOrganization
+        }
       />
       <AddEditDrawer
         entity={entity}
         isOpen={popupOpen}
         data={editData}
-        onSave={entity === 'students' ? handleSaveStudent : (entity === 'mentors' ? handleSaveMentor : handleSaveProject)}
+        onSave={
+          entity === 'students' ? handleSaveStudent :
+          entity === 'mentors' ? handleSaveMentor :
+          entity === 'projects' ? handleSaveProject :
+          handleSaveOrganization
+        }
         onClose={handleClose}
       />
     </div>
