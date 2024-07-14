@@ -55,19 +55,19 @@ export const insertStudent = async (student) => {
 };
 
 // Delete a record based on index
-export const deleteStudents = async (studentIds) => {
-    const response = await fetch(`${BASE_URL}/students`, {
+export const deleteStudent = async (studentId) => {
+    const response = await fetch(`${BASE_URL}/students?student_id=${studentId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(studentIds),
     });
     if (!response.ok) {
-      throw new Error('Failed to delete students');
+      throw new Error('Failed to delete student');
     }
     return response.json();
   };
+  
   
 // Update a record
 export const updateStudent = async (studentId, student) => {
@@ -116,16 +116,15 @@ export const insertMentor = async (mentor) => {
   };
 
   // Delete a record based on index
-export const deleteMentors = async (mentorIds) => {
-    const response = await fetch(`${BASE_URL}/mentors`, {
+export const deleteMentor = async (mentorId) => {
+    const response = await fetch(`${BASE_URL}/mentors/?mentor_id=${mentorId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(mentorIds),
     });
     if (!response.ok) {
-      throw new Error('Failed to delete mentors');
+      throw new Error('Failed to delete mentor');
     }
     return response.json();
   };
@@ -161,16 +160,16 @@ export const insertProject = async (project) => {
   };
 
   // Delete a record based on index
-export const deleteProjects = async (projectIds) => {
-    const response = await fetch(`${BASE_URL}/projects`, {
+export const deleteProject = async (projectId) => {
+    const response = await fetch(`${BASE_URL}/projects?project_id=${projectId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(projectIds),
+      body: JSON.stringify({project_id: projectId}),
     });
     if (!response.ok) {
-      throw new Error('Failed to delete projects');
+      throw new Error('Failed to delete project');
     }
     return response.json();
   };

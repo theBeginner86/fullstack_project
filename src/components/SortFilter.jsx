@@ -4,7 +4,7 @@ import { fetchEntityColumns } from '../api';
 
 const { Option } = Select;
 
-const SortFilter = ({ sortBy, sortType, onSortChange, onSortTypeChange, onSort, onAdd, onDelete, entity }) => {
+const SortFilter = ({ sortBy, sortType, onSortChange, onSortTypeChange, onSort, onAdd, entity }) => {
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
@@ -34,7 +34,6 @@ const SortFilter = ({ sortBy, sortType, onSortChange, onSortTypeChange, onSort, 
       </Select>
       <Button type="primary" onClick={onSort}>Sort</Button>
       <Button type="primary" onClick={onAdd}>Add</Button>
-      <Button onClick={onDelete}>Delete</Button>
     </div>
   );
 };

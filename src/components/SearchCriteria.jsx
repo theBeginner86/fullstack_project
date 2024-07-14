@@ -6,7 +6,7 @@ const { Option } = Select;
 
 const SearchCriteria = ({ entity, onSearch, onReset }) => {
   const [columns, setColumns] = useState([]);
-  const [selectedColumn, setSelectedColumn] = useState('');
+  const [selectedColumn, setSelectedColumn] = useState('ID');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const SearchCriteria = ({ entity, onSearch, onReset }) => {
       <Select
         value={selectedColumn}
         onChange={value => setSelectedColumn(value)}
-        placeholder="Select Column"
+        placeholder="Search By"
         className="w-40"
       >
         {columns.map(column => (
