@@ -11,7 +11,7 @@ export const entityConfig = {
     requiredFields: [
       'MentorID', 'Name', 'eMail', 'Mobile', 
       'Specialization', 'Availability', 'LinkedIn', 
-      'Organization'
+      'OrganizationID'
     ],
   },
   projects: {
