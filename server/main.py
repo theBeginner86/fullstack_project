@@ -70,7 +70,6 @@ class MentorBase(BaseModel):
     Specialization: Optional[str]
     Availability: Optional[str]
     LinkedIn: Optional[str]
-    Organization: Optional[str]
     OrganizationID: Optional[int]
 
 class MentorCreate(MentorBase):
@@ -151,7 +150,6 @@ columns_mapping = {
         "Specialization",
         "Availability",
         "LinkedIn",
-        "Organization",
         "OrganizationID"
     ],
     "projects": [
