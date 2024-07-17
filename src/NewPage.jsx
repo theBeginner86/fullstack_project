@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, BrowserRouter } from 'react-router-dom';
 import Navbar from './components/NavBar';
+import AddEditDrawer from './components/AddEditDrawer';
 import App from './App';
 
 const NavbarWrapper = ({ logoPath }) => {
@@ -34,7 +35,7 @@ const NewPage = () => {
     <BrowserRouter>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <NavbarWrapper logoPath={logoPath} />
-        <div className="container" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="container" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 64px)' }}>
           <Routes>
             <Route path="/studentpage" element={<App entity="students" />} />
             <Route path="/mentorpage" element={<App entity="mentors" />} />
@@ -43,6 +44,7 @@ const NewPage = () => {
             <Route path="/" element={<div>Welcome to the home page</div>} />
           </Routes>
         </div>
+        <AddEditDrawer /> {/* Add Drawer here */}
       </div>
     </BrowserRouter>
   );
