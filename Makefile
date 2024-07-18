@@ -1,10 +1,11 @@
+.PHONY: server
 
 ## Run server and db
-run-server:
+server:
 	cd server;
 	docker run --name mysql-db -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:9;
 ## remove this root user/password in future - insecure method
-	sleep 5;
+	sleep 10;
 	docker exec -i mysql-db sh -c 'exec mysql -uroot -p"root"' < ./server/setup.sql;
 	sleep 5;
 	docker run -d --name full-stack-backend -p 8000:8000 full-stack-backend;
