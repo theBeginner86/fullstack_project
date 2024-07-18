@@ -66,6 +66,7 @@ const AddEditDrawer = ({ isOpen, data, onSave, onClose, entity }) => {
       onClose={onClose}
       visible={isOpen}
       width={400}
+      zIndex={900} // Ensure the z-index is lower than navbar
       footer={
         <div
           style={{

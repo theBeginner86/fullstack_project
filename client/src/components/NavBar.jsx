@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MenuOutlined } from "@ant-design/icons";
 import "tailwindcss/tailwind.css"; // Ensure Tailwind CSS is imported
+import "./NavBar.css";
 
 const AccordionButton = ({ title, items, onItemClick }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +30,7 @@ const AccordionButton = ({ title, items, onItemClick }) => {
         <span className="ml-2">{isOpen ? '▲' : '▼'}</span>
       </button>
       {isOpen && (
-        <div className="absolute top-full right-0 bg-white rounded shadow-md mt-2 z-50">
+        <div className="absolute top-full right-0 bg-white rounded shadow-md mt-2 z-[1001]">
           {items.map((item, index) => (
             <a
               key={index}
@@ -54,7 +55,7 @@ export default function Navbar({ logoPath, onMenuClick }) {
   const menuItems = ['Students', 'Mentors', 'Projects', 'Enterprises'];
 
   return (
-    <nav className="flex items-center justify-between p-4 bg-gray-900">
+    <nav className="flex items-center justify-between p-4 bg-gray-900 navbar-z-index">
       <img src={logoPath} alt="Your Company" className="h-8" />
       <AccordionButton title={<MenuOutlined />} items={menuItems} onItemClick={onMenuClick} />
     </nav>
