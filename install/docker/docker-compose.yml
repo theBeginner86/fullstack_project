@@ -1,0 +1,39 @@
+version: "3"
+services:
+  client:
+    image: full-stack-frontend:latest
+    ports:
+      - 3000:3000
+    build:
+      context: ../../client
+    container_name: full-stack-frontend
+    networks:
+      - full-stack-net
+  server:
+    image: full-stack-backend:latest
+    ports:
+      - 8000:8000
+    build:
+      context: ../../server
+    depends_on:
+      - mysql-db
+    container_name: full-stack-backend
+    networks:
+      - full-stack-net
+  mysql-db:
+    image: mysql:9
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    container_name: mysql-db
+    command: --init-file /data/application/init.sql
+    networks:
+      - full-stack-net
+    volumes:
+        - ../../server/init.sql:/data/application/init.sql
+        - ~/.full-stack-app/mysql:/var/lib/mysql
+networks:
+  full-stack-net:
+    driver: bridge
+    
