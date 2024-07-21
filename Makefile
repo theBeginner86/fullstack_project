@@ -10,6 +10,7 @@ server:
 	-p 3306:3306 \
 	-e MYSQL_ROOT_PASSWORD=root \
 	-e MYSQL_ROOT_HOST=% \
+	--volume ~/.full-stack-app/mysql:/var/lib/mysql
 	-d \
 	mysql:9;
 ## remove this root user/password in future - insecure method
